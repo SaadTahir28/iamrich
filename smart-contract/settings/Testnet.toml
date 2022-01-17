@@ -3,4 +3,4 @@ name = "testnet"
 node_rpc_address = "https://stacks-node-api.testnet.stacks.co"
 
 [accounts.deployer]
-mnemonic = "<YOUR PRIVATE TESTNET MNEMONIC HERE>"
+mnemonic = "palace view afford senior prosper army cattle glance almost fortune beauty because kick poverty keen exit lesson space apology author vault grow project render"

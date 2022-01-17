@@ -68,6 +68,6 @@
         (try! (stx-transfer? commission tx-sender (as-contract tx-sender)))
         (var-set current-richest tx-sender)
         (var-set last-transaction-amount amount)
-        (ok {tx-sender})
+        (ok tx-sender)
     )
 )

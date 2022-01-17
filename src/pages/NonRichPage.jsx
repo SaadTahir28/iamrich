@@ -8,8 +8,11 @@ import { useEffect, useState } from 'react';
 import Buttons from '../assets/styles/components/buttons';
 import useUser from '../data/hooks/useUser';
 import BackendService from '../services/BackendService';
+import { callReadOnlyFunction } from "@stacks/transactions";
 import { AppConfig, showConnect, UserSession } from '@stacks/connect-react';
+import { StacksTestnet } from "@stacks/network";
 
+const network = new StacksTestnet();
 const appConfig = new AppConfig(['store_write', 'publish_data']);
 const userSession = new UserSession({ appConfig });
 
@@ -40,6 +43,29 @@ export default function NonRichPage() {
 	};
 	const onLogoutClick = () => logout();
 	const onRichClick = () => console.log('Handle api call here');
+	const handleSubmit = async (e) => {
+		const contractAddress = "ST5GACDNGCT91KQYMHFQ6BDDFS034RQK5FX4JSWW";
+		const contractName = "richirich";
+		const functionName = "get-current-richest";
+	
+		const options = {
+		  contractAddress,
+		  contractName,
+		  functionName,
+		  functionArgs: [],
+		  network,
+		  senderAddress: "ST5GACDNGCT91KQYMHFQ6BDDFS034RQK5FX4JSWW",
+		};
+	
+		try {
+		  const result = await callReadOnlyFunction(options);
+		  console.log(result);
+		  console.log("Function Succeded: " + result.value);
+		} catch (err) {
+		  console.log(err);
+		  console.log("Function failed with error: " + err); // TypeError: failed to fetch
+		}
+	  };
 
 	return (
 		<Page>
@@ -57,7 +83,20 @@ export default function NonRichPage() {
 				<Button onClick={onRichClick} size='lg' mt='8' {...Buttons.variants.red} disabled={!isLoggedIn}>
 					I am rich
 				</Button>
+				<Button onClick={handleSubmit} size='lg' mt='8' {...Buttons.variants.red}> CLICK ME </Button>
+
 			</PageSection>
 		</Page>
 	);
+}
+
+function getCurrentRichest() {
+
+	const handleSubmit = async (e) => {
+		console.log("getCurrentRichest");
+	}
+
+	return (
+		<Button onClick={handleSubmit} size='lg' mt='8' {...Buttons.variants.red}> CLICK ME </Button>
+	)
 }

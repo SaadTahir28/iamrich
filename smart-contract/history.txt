@@ -34,3 +34,16 @@
 (contract-call? .richirich get-amount-commission u30)
 (contract-call? .richirich get-next-transaction-amount)
 (contract-call? .richirich get-last-transaction-amount)
+(contract-call? .richirich get-next-transaction-amount)
+(contract-call? .richirich get-amount-commission)
+(contract-call? .richirich get-amount-commission u11000000)
+(contract-call? .richirich become-richest)
+::get_assets_maps
+(contract-call? .richirich get-next-transaction-amount)
+(contract-call? .richirich get-last-transaction-amount)
+(contract-call? .richirich become-richest)
+(contract-call? .richirich get-current-richest)
+::set_tx_sender STNHKEPYEPJ8ET55ZZ0M5A34J0R3N5FM2CMMMAZ6
+(contract-call? 'ST1PQHQKV0RJXZFY1DGX8MNSNYVE3VGZJSRTPGZGM.richirich get-current-richest)
+(contract-call? 'ST1PQHQKV0RJXZFY1DGX8MNSNYVE3VGZJSRTPGZGM.richirich become-richest)
+(contract-call? 'ST1PQHQKV0RJXZFY1DGX8MNSNYVE3VGZJSRTPGZGM.richirich get-current-richest)

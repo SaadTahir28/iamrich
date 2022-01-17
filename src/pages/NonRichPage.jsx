@@ -26,13 +26,14 @@ export default function NonRichPage() {
 	const onConnectClick = () => {
 		showConnect({
 			appDetails: {
-				name: 'My App',
+				name: 'iamrich',
 				icon: window.location.origin + '/my-app-logo.svg'
 			},
 			redirectTo: '/',
 			onFinish: () => {
 				let userData = userSession.loadUserData();
 				// Save or otherwise utilize userData post-authentication
+				console.log(userData);
 			},
 			userSession: userSession
 		});

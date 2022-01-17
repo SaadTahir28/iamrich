@@ -1,0 +1,12 @@
+#V2
+::set_tx_sender STNHKEPYEPJ8ET55ZZ0M5A34J0R3N5FM2CMMMAZ6
+(contract-call? .richirich become-richest u1000000)
+(contract-call? .richirich get-current-richest)
+(contract-call? .richirich get-last-transaction-amount)
+(contract-call? .richirich become-richest u100000)
+(contract-call? .richirich become-richest u10000000)
+::get_assets_maps
+::set_tx_sender STNHKEPYEPJ8ET55ZZ0M5A34J0R3N5FM2CMMMAZ6
+(contract-call? 'ST1PQHQKV0RJXZFY1DGX8MNSNYVE3VGZJSRTPGZGM.richirich become-richest u10000000)
+(contract-call? 'ST1PQHQKV0RJXZFY1DGX8MNSNYVE3VGZJSRTPGZGM.richirich become-richest u10000001)
+(contract-call? .richirich become-richest u10000000)

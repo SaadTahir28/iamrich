@@ -1,0 +1,7 @@
+[project]
+name = "i_am_rich"
+requirements = []
+costs_version = 1
+[contracts.richirich]
+path = "contracts/richirich.clar"
+depends_on = []

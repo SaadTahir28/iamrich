@@ -1,6 +1,9 @@
 import { useCookies } from 'react-cookie';
 import Cookies from '../Cookies';
-import { AppConfig, UserSession } from "@stacks/connect";
+import { AppConfig, UserSession } from '@stacks/connect-react';
+
+const appConfig = new AppConfig(['store_write', 'publish_data']);
+const userSession = new UserSession({ appConfig });
 
 export default function useUser() {
 	const [cookies, setCookie, removeCookie] = useCookies([Cookies.KEY_USER]);

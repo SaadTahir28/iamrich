@@ -12,9 +12,6 @@
 (define-data-var last-transaction-amount uint u10000000) ;; this is the initial transaction rate
 (define-map rich-history { user: principal } { amount: uint })
 
-;; We need to have incremental investment so that the next person who wants to become should pay more than the current richest amount
-;; We need to have history of rich people
-
 ;; getters
 (define-read-only (get-current-richest)
     (var-get current-richest)
@@ -38,6 +35,10 @@
 
 (define-read-only (get-amount-commission (amount uint))
     (/ (* amount (get-commission-rate)) u1000)
+)
+
+(define-read-only (get-rich-history (user principal))
+    (map-get? rich-history {user: user})
 )
 
 ;; setters
@@ -68,6 +69,7 @@
         (try! (stx-transfer? commission tx-sender (as-contract tx-sender)))
         (var-set current-richest tx-sender)
         (var-set last-transaction-amount amount)
+        (map-set rich-history {user: tx-sender} {amount: amount})
         (ok tx-sender)
     )
 )

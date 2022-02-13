@@ -7,24 +7,69 @@ import Page from '../components/layout/Page';
 import { useEffect, useState } from 'react';
 import Buttons from '../assets/styles/components/buttons';
 import useUser from '../data/hooks/useUser';
-import BackendService from '../services/BackendService';
-import { callReadOnlyFunction } from "@stacks/transactions";
+import { callReadOnlyFunction, cvToValue, cvToString } from "@stacks/transactions";
 import { AppConfig, showConnect, UserSession } from '@stacks/connect-react';
 import { StacksTestnet } from "@stacks/network";
+import * as constants from "../util/constants";
+
+const BigNum = require("bn.js");
 
 const network = new StacksTestnet();
 const appConfig = new AppConfig(['store_write', 'publish_data']);
 const userSession = new UserSession({ appConfig });
 
+function ConvertAmountInStacks(microStacks) {
+	return microStacks / 1000000;
+}
+
 export default function NonRichPage() {
 	const { user, isLoggedIn, logout } = useUser();
 	const [richestPerson, setRichestPerson] = useState(null);
+	const [richestPersonAmount, setRichestPersonAmount] = useState(0);
 
 	useEffect(() => {
-		BackendService.getRichestPerson()
-			.then(person => setRichestPerson(person))
-			.catch(e => console.log(e));
-	}, []);
+		async function handleSubmit() {
+			const options = {
+				contractAddress: constants.contractAddress,
+				contractName: constants.contractName,
+				functionName: constants.getCurrentRichest,
+				functionArgs: [],
+				network,
+				senderAddress: constants.contractAddress,
+			};
+			try {
+				const result = await callReadOnlyFunction(options);
+				const response = cvToValue(result);
+				setRichestPerson(response);
+			} catch (err) {
+				console.log(err);
+			}
+		}
+		handleSubmit();
+	}, [richestPerson]);
+
+	useEffect(() => {
+		async function handleSubmit() {
+			const options = {
+				contractAddress: constants.contractAddress,
+				contractName: constants.contractName,
+				functionName: constants.getLastTransactionAmount,
+				functionArgs: [],
+				network,
+				senderAddress: constants.contractAddress,
+			};
+			try {
+				const result = await callReadOnlyFunction(options);
+				const response = cvToValue(result);
+				const amountInStacks = ConvertAmountInStacks(Number(response));
+				setRichestPersonAmount(amountInStacks);
+				console.log("RPA", richestPersonAmount)
+			} catch (err) {
+				console.log(err);
+			}
+		}
+		handleSubmit();
+	}, [richestPersonAmount]);
 
 	const onConnectClick = () => {
 		showConnect({
@@ -43,30 +88,7 @@ export default function NonRichPage() {
 	};
 	const onLogoutClick = () => logout();
 	const onRichClick = () => console.log('Handle api call here');
-	const handleSubmit = async (e) => {
-		const contractAddress = "ST5GACDNGCT91KQYMHFQ6BDDFS034RQK5FX4JSWW";
-		const contractName = "richirich";
-		const functionName = "get-current-richest";
 	
-		const options = {
-		  contractAddress,
-		  contractName,
-		  functionName,
-		  functionArgs: [],
-		  network,
-		  senderAddress: "ST5GACDNGCT91KQYMHFQ6BDDFS034RQK5FX4JSWW",
-		};
-	
-		try {
-		  const result = await callReadOnlyFunction(options);
-		  console.log(result);
-		  console.log("Function Succeded: " + result.value);
-		} catch (err) {
-		  console.log(err);
-		  console.log("Function failed with error: " + err); // TypeError: failed to fetch
-		}
-	  };
-
 	return (
 		<Page>
 			<PageSection minH={StyleVariables.NavbarHeight} justifyContent='flex-end'>
@@ -78,25 +100,13 @@ export default function NonRichPage() {
 				<LottieAnimation data={gemAnimation} />
 				<Text fontSize='l' textAlign='center'>Want to show your friends your are rich?</Text>
 				<Text fontSize='2xl' mt='2' textAlign='center'>
-					Current richest person is with {richestPerson?.amount || '...'}
+					Current richest person is <i><b>{richestPerson}</b></i> with <i><b>{richestPersonAmount} STX</b></i>
 				</Text>
 				<Button onClick={onRichClick} size='lg' mt='8' {...Buttons.variants.red} disabled={!isLoggedIn}>
 					I am rich
 				</Button>
-				<Button onClick={handleSubmit} size='lg' mt='8' {...Buttons.variants.red}> CLICK ME </Button>
 
 			</PageSection>
 		</Page>
 	);
-}
-
-function getCurrentRichest() {
-
-	const handleSubmit = async (e) => {
-		console.log("getCurrentRichest");
-	}
-
-	return (
-		<Button onClick={handleSubmit} size='lg' mt='8' {...Buttons.variants.red}> CLICK ME </Button>
-	)
 }

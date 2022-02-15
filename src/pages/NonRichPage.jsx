@@ -7,88 +7,30 @@ import Page from '../components/layout/Page';
 import { useEffect, useState } from 'react';
 import Buttons from '../assets/styles/components/buttons';
 import useUser from '../data/hooks/useUser';
-import { callReadOnlyFunction, cvToValue, cvToString } from "@stacks/transactions";
-import { AppConfig, showConnect, UserSession } from '@stacks/connect-react';
-import { StacksTestnet } from "@stacks/network";
-import * as constants from "../util/constants";
-
-const BigNum = require("bn.js");
-
-const network = new StacksTestnet();
-const appConfig = new AppConfig(['store_write', 'publish_data']);
-const userSession = new UserSession({ appConfig });
-
-function ConvertAmountInStacks(microStacks) {
-	return microStacks / 1000000;
-}
+import HiroService from '../services/HiroService';
 
 export default function NonRichPage() {
-	const { user, isLoggedIn, logout } = useUser();
+	const { user, isLoggedIn, logout, showHiroLogin } = useUser();
 	const [richestPerson, setRichestPerson] = useState(null);
 	const [richestPersonAmount, setRichestPersonAmount] = useState(0);
 
 	useEffect(() => {
-		async function handleSubmit() {
-			const options = {
-				contractAddress: constants.contractAddress,
-				contractName: constants.contractName,
-				functionName: constants.getCurrentRichest,
-				functionArgs: [],
-				network,
-				senderAddress: constants.contractAddress,
-			};
-			try {
-				const result = await callReadOnlyFunction(options);
-				const response = cvToValue(result);
-				setRichestPerson(response);
-			} catch (err) {
-				console.log(err);
-			}
-		}
-		handleSubmit();
+		HiroService.getLastTransactionAmount()
+			.then(result => console.log(result));
 	}, [richestPerson]);
 
 	useEffect(() => {
-		async function handleSubmit() {
-			const options = {
-				contractAddress: constants.contractAddress,
-				contractName: constants.contractName,
-				functionName: constants.getLastTransactionAmount,
-				functionArgs: [],
-				network,
-				senderAddress: constants.contractAddress,
-			};
-			try {
-				const result = await callReadOnlyFunction(options);
-				const response = cvToValue(result);
-				const amountInStacks = ConvertAmountInStacks(Number(response));
-				setRichestPersonAmount(amountInStacks);
-				console.log("RPA", richestPersonAmount)
-			} catch (err) {
-				console.log(err);
-			}
-		}
-		handleSubmit();
+		HiroService.getRichestPerson()
+			.then(res => {
+				setRichestPersonAmount(res.stacks);
+				console.log('RPA', richestPersonAmount);
+			});
 	}, [richestPersonAmount]);
 
-	const onConnectClick = () => {
-		showConnect({
-			appDetails: {
-				name: 'iamrich',
-				icon: window.location.origin + '/my-app-logo.svg'
-			},
-			redirectTo: '/',
-			onFinish: () => {
-				let userData = userSession.loadUserData();
-				// Save or otherwise utilize userData post-authentication
-				console.log(userData);
-			},
-			userSession: userSession
-		});
-	};
+	const onConnectClick = () => showHiroLogin();
 	const onLogoutClick = () => logout();
 	const onRichClick = () => console.log('Handle api call here');
-	
+
 	return (
 		<Page>
 			<PageSection minH={StyleVariables.NavbarHeight} justifyContent='flex-end'>

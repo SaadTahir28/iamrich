@@ -10,63 +10,65 @@ import useUser from '../data/hooks/useUser';
 import HiroService from '../services/HiroService';
 
 export default function NonRichPage() {
-	const { user, isLoggedIn, logout, showHiroLogin } = useUser();
+	const { user, isLoggedIn, hiroLogout, showHiroLogin } = useUser();
 	const [richestPerson, setRichestPerson] = useState(null);
 	const [richestPersonAmount, setRichestPersonAmount] = useState(0);
 	const [nextRichestPersonAmount, setNextRichestPersonAmount] = useState(0);
 	const [amountCommission, setAmountCommission] = useState(0);
-
+		
 	useEffect(() => {
-		if (userSession.isSignInPending()) {
-		  userSession.handlePendingSignIn().then((userData) => {
-			console.log("handlePendingSignIn: " + userData);
-			setUserData(userData);
-		  });
-		} else if (userSession.isUserSignedIn()) {
-		  console.log("already signed in");
-		  const userData = userSession.loadUserData();
-		  setUserData(userData);
-		} else {
-		  console.log("signed out");
-		}
-	  }, []);
+		HiroService.getRichestPerson()
+		.then(result => {
+			console.log(result)
+			setRichestPerson(result);
+		});
+	}, [richestPerson]);
 
 	useEffect(() => {
 		HiroService.getLastTransactionAmount()
 			.then(result => {
-				console.log(result)
+				setRichestPersonAmount(result.stacks)
+				console.log('Richest', richestPersonAmount);
 			});
-	}, [richestPerson]);
+		}, [richestPersonAmount]);
 
 	useEffect(() => {
-		HiroService.getRichestPerson()
-			.then(res => {
-				setRichestPersonAmount(res.stacks);
-				console.log('RPA', richestPersonAmount);
+		HiroService.getAmountCommission()
+			.then(result => {
+				setAmountCommission(result.stacks);
+				console.log('amountCommission', amountCommission);
 			});
-	}, [richestPersonAmount]);
+	}, [amountCommission]);
+
+	useEffect(() => {
+		HiroService.getNextTransactionAmount()
+			.then(result => {
+				setNextRichestPersonAmount(result.stacks);
+				console.log('nextRichestPersonAmount', nextRichestPersonAmount);
+			});
+	}, [nextRichestPersonAmount]);
 
 	const onConnectClick = () => showHiroLogin();
-	const onLogoutClick = () => logout();
-	const onRichClick = () => console.log('Handle api call here');
+	const onLogoutClick = () => hiroLogout();
+	const onRichClick = () => HiroService.becomeRichest(user.profile.stxAddress.testnet, amountCommission)
 
 	return (
 		<Page>
 			<PageSection minH={StyleVariables.NavbarHeight} justifyContent='flex-end'>
-				<Button onClick={userSession.isUserSignedIn() ? onLogoutClick : onConnectClick} size='md'>
-					{userSession.isUserSignedIn() ? userData?.profile.stxAddress.testnet : 'Connect'}
+				<Button onClick={isLoggedIn() ? onLogoutClick : onConnectClick} size='md'>
+					{isLoggedIn() ? user.profile.stxAddress.testnet : 'Connect'}
 				</Button>
 			</PageSection>
 			<PageSection alignItems='center' flexDirection='column'>
 				<LottieAnimation data={gemAnimation} />
 				<Text fontSize='l' textAlign='center'>Want to show your friends your are rich?</Text>
 				<Text fontSize='2xl' mt='2' textAlign='center'>
-					Current richest person is <i><b>{richestPerson}</b></i> with <i><b>{ConvertAmountInStacks(richestPersonAmount)} STX</b></i>
+					Current richest person is <i><b>{richestPerson}</b></i> with <i><b>{richestPersonAmount} STX</b></i>
 				</Text>
 				<Text fontSize='2xl' mt='2' textAlign='center'>
-					You can become the next richest person with <i><b>{ConvertAmountInStacks(nextRichestPersonAmount)} STX</b></i>
+					You can become the next richest person with <i><b>{nextRichestPersonAmount} STX</b></i>
 				</Text>
-				<Button onClick={onRichClick} size='lg' mt='8' {...Buttons.variants.red} disabled={!userSession.isUserSignedIn()}>
+				<Button onClick={onRichClick} size='lg' mt='8' {...Buttons.variants.red} disabled={!isLoggedIn()}>
 					I am rich
 				</Button>
 			</PageSection>

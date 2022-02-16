@@ -7,9 +7,9 @@ import Page from '../components/layout/Page';
 import useUser from '../data/hooks/useUser';
 
 export default function RichestPersonPage() {
-	const { user, logout } = useUser();
+	const { user, hiroLogout } = useUser();
 
-	const onLogoutClick = () => logout();
+	const onLogoutClick = () => hiroLogout();
 
 	return (
 		<Page>

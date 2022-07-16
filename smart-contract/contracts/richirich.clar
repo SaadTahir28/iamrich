@@ -33,6 +33,11 @@
     (+ (get-last-transaction-amount) (/ (* (get-last-transaction-amount) (get-next-transaction-rate)) u1000))
 )
 
+;; amount = 10*1000000
+;; (* 10*1000000 u25)
+;; (/ 250,000,000 1000)
+;; (/ 250,000 1000000)
+;; (0.25)
 (define-read-only (get-amount-commission (amount uint))
     (/ (* amount (get-commission-rate)) u1000)
 )

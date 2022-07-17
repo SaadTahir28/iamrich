@@ -3,14 +3,12 @@ import Links from './Links';
 import NonRichPage from '../pages/NonRichPage';
 import RichestPersonPage from '../pages/RichestPersonPage';
 import { AppConfig, UserSession } from '@stacks/connect-react';
-import { useEffect, useState } from 'react';
-import HiroService from '../services/HiroService';
+import { useEffect } from 'react';
 
 const appConfig = new AppConfig(['store_write', 'publish_data']);
 const userSession = new UserSession({ appConfig });
 
 export default function Navigation() {
-	const [userSignedIn, setUserSignedIn] = useState(false);
 
 	useEffect(() => {
 		if (userSession.isSignInPending()) {
@@ -19,13 +17,8 @@ export default function Navigation() {
 			});
 		  } else if (userSession.isUserSignedIn()) {
 			console.log("already signed in");
-			const userData = userSession.loadUserData();
-			setUserSignedIn(true);
-		  } else {
-			console.log("signed out");
-			setUserSignedIn(false);
 		  }
-	}, [userSignedIn]);
+	});
 
 
 	return (

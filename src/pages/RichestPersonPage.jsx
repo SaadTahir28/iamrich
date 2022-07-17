@@ -2,7 +2,7 @@ import PageSection from '../components/layout/PageSection';
 import { StyleVariables } from '../assets/styles/variables';
 import { Button, Text } from '@chakra-ui/react';
 import LottieAnimation from '../components/LottieAnimation';
-import gemAnimation from '../assets/animations/gem-animation.json';
+import moeda from '../assets/animations/moeda.json';
 import Page from '../components/layout/Page';
 import { AppConfig, UserSession } from '@stacks/connect-react';
 import { useEffect, useState } from 'react';
@@ -30,7 +30,6 @@ export default function RichestPersonPage() {
 			});
 		  } else if (userSession.isUserSignedIn()) {
 			console.log("already signed in");
-			const userData = userSession.loadUserData();
 			setUserSignedIn(true);
 		  } else {
 			console.log("signed out");
@@ -52,8 +51,11 @@ export default function RichestPersonPage() {
 			<PageSection minH={StyleVariables.NavbarHeight} justifyContent='flex-end'>
 				<Button onClick={onLogoutClick} size='md'>{getUserAddress()}</Button>
 			</PageSection>
+			<PageSection minH={StyleVariables.NavbarHeight} justifyContent='flex-end'>
+				<Text fontSize='l' textAlign='center'><b>Network: </b>Testnet</Text>
+			</PageSection>
 			<PageSection padding={0} alignItems='center' flexDirection='column'>
-				<LottieAnimation data={gemAnimation} />
+				<LottieAnimation data={moeda} />
 				<Text fontSize='3xl' fontWeight='600'>You are the richest person with</Text>
 				<Text fontSize='6xl' fontWeight='800'>{richestPersonAmount} STX</Text>
 			</PageSection>

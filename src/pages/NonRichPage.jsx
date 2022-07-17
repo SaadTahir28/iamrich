@@ -5,7 +5,7 @@ import { Button, Text } from '@chakra-ui/react';
 import PageSection from '../components/layout/PageSection';
 import { StyleVariables } from '../assets/styles/variables';
 import LottieAnimation from '../components/LottieAnimation';
-import gemAnimation from '../assets/animations/gem-animation.json';
+import money from '../assets/animations/money.json';
 import Page from '../components/layout/Page';
 import { useEffect, useState } from 'react';
 import Buttons from '../assets/styles/components/buttons';
@@ -61,7 +61,6 @@ export default function NonRichPage() {
 			});
 		  } else if (userSession.isUserSignedIn()) {
 			console.log("already signed in");
-			const userData = userSession.loadUserData();
 			setUserSignedIn(true);
 		  } else {
 			console.log("signed out");
@@ -78,11 +77,9 @@ export default function NonRichPage() {
 			},
 			redirectTo: '/',
 			onFinish: () => {
-				// window.location.reload();
-				if(richestPerson == getUserAddress()) {
+				if(richestPerson === getUserAddress()) {
 					//navigate to richest page
 					navigate(`/rich-person`);
-
 				} else {
 					//stay here
 					window.location.reload();
@@ -99,7 +96,12 @@ export default function NonRichPage() {
 
 	function onRichClick(){
 		console.log("onRichClick");
-		HiroService.becomeRichest(getUserAddress(), amountCommission);
+		if(richestPerson === getUserAddress()) {
+			//navigate to richest page
+			navigate(`/rich-person`);
+		} else {
+			HiroService.becomeRichest(getUserAddress(), amountCommission);
+		}		
 	}
 
 	function getUserAddress(){
@@ -117,8 +119,11 @@ export default function NonRichPage() {
 					{userSignedIn ? getUserAddress() : 'Connect'}
 				</Button>
 			</PageSection>
+			<PageSection minH={StyleVariables.NavbarHeight} justifyContent='flex-end'>
+				<Text fontSize='l' textAlign='center'><b>Network: </b>Testnet</Text>
+			</PageSection>
 			<PageSection alignItems='center' flexDirection='column'>
-				<LottieAnimation data={gemAnimation} />
+				<LottieAnimation data={money} />
 				<Text fontSize='l' textAlign='center'>Want to show your friends your are rich?</Text>
 				<Text fontSize='2xl' mt='2' textAlign='center'>
 					Current richest person is <i><b>{richestPerson}</b></i> with <i><b>{richestPersonAmount} STX</b></i>
